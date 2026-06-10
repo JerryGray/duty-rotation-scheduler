@@ -1,6 +1,6 @@
 # Duty Rotation Scheduler
 
-A desktop application built in Python for automating the generation of monthly duty rotation schedules across multiple staff groups. The app handles scheduling constraints like unavailability, break-day quotas, and mid-month changes, and presents everything in a color-coded calendar interface.
+A desktop application built in Python (web app version in progress) for automating the generation of monthly duty rotation schedules across multiple staff groups. The app handles scheduling constraints like unavailability, break-day quotas, and mid-month changes, and presents everything in a color-coded calendar interface.
 
 ## Background
 This project grew out of a real operational need. Managing a monthly duty rotation for multiple staff members across different shifts, while accounting for PTO, unplanned absences, break days, and balanced duty assignment, was a tedious manual process. This tool was built to automate that process while keeping a human in the loop for overrides and edge cases.
@@ -23,21 +23,33 @@ The app supports multiple independent workspaces, each with its own staff roster
 #### Calendar View
 The main interface displays a full monthly calendar with configurable color-coded assignment blocks for each staff member. Shift groups are displayed separately within each day cell. Break and "off" days are shown inline as labeled indicators. Icons appear on days that are individually locked (distinct from month-level lock) and/or have notes attached to them. Navigation arrows allow browsing forward and backward through months.
 
+#### Desktop
 <img src="screenshots/calendar_view.png">
+
+#### Web app
+<img src="screenshots/calendar_view_web.png">
 
 ---
 
 #### Manual Day Editing
 Clicking any calendar day opens a day editor where assignments can be changed, break days can be reassigned, and off days can be added or removed per shift. The editor enforces break-day limits and warns before allowing overrides that would exceed a staff member's configured quota. The editor also allows attaching a free-text note to a day and toggling per-day protection, which locks that day's assignments even if that month's schedule is regenerated for any reason.
 
+#### Desktop
 <img src="screenshots/day_editor.png">
+
+#### Web app
+<img src="screenshots/day_editor_web.png">
 
 ---
 
 #### Assignment Summary
 A summary window lists each staff member's duty assignment counts, break days (with dates), and unavailable days for the current month, useful for auditing fairness and confirming the schedule makes sense before publishing.
 
+#### Desktop
 <img src="screenshots/assignment_summary.png">
+
+#### Web app
+<img src="screenshots/assignment_summary_web.png">
 
 ---
 
@@ -47,19 +59,19 @@ A dedicated admin view provides tabs for managing staff and duties, workspace se
 
  - Members tab - add, edit, or remove staff; set shift group, add/remove unavailable dates
    
-   <img src="screenshots/member_editor.png">
+   <img src="screenshots/member_editor.png"> &nbsp;&nbsp;&nbsp;&nbsp; <img src="screenshots/member_editor_web.png">
 
  - Duties tab - define duty types, assign them to shift groups, and 'delete' (archive) duties that are no longer active
    
-   <img src="screenshots/duty_editor.png">
+   <img src="screenshots/duty_editor.png"> &nbsp;&nbsp;&nbsp;&nbsp; <img src="screenshots/duty_editor_web.png">
 
  - Settings tab - configure break-day quotas per shift group, rename or delete workspaces, and view/restore archived schedules
 
-   <img src="screenshots/settings_tab.png">
+   <img src="screenshots/settings_tab.png"> &nbsp;&nbsp;&nbsp;&nbsp; <img src="screenshots/settings_tab_web.png">
    
  - Audit log tab - view a timestamped history of changes made in the workspace: staff edits, duty changes, workspace renames, and schedule events. The log is filterable by keyword and sortable by any column.
 
-   <img src="screenshots/audit_log.png">
+   <img src="screenshots/audit_log.png"> &nbsp;&nbsp;&nbsp;&nbsp; <img src="screenshots/audit_log_web.png">
 
 ---
 
