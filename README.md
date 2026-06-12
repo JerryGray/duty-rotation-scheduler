@@ -1,6 +1,6 @@
 # Duty Rotation Scheduler
 
-A desktop application built in Python (web app version in progress) for automating the generation of monthly duty rotation schedules across multiple staff groups. The app handles scheduling constraints like unavailability, break-day quotas, and mid-month changes, and presents everything in a color-coded calendar interface.
+A scheduling tool originally built as a Python desktop application, now rebuilt and deployed as a multi-tenant web application. It automates the generation of monthly duty rotation schedules across multiple staff groups and shift configurations, handles scheduling constraints like unavailability, break-day quotas, and mid-month changes, and presents everything in a color-coded calendar interface. The web version adds role-based access control, organization and workspace isolation, and a browser-based interface accessible from any device.
 
 ## Background
 This project grew out of a real operational need. Managing a monthly duty rotation for multiple staff members across different shifts, while accounting for PTO, unplanned absences, break days, and balanced duty assignment, was a tedious manual process. This tool was built to automate that process while keeping a human in the loop for overrides and edge cases.
@@ -21,12 +21,8 @@ The app supports multiple independent workspaces, each with its own staff roster
 ## Features
 
 #### Calendar View
-The main interface displays a full monthly calendar with configurable color-coded assignment blocks for each staff member. Shift groups are displayed separately within each day cell. Break and "off" days are shown inline as labeled indicators. Icons appear on days that are individually locked (distinct from month-level lock) and/or have notes attached to them. Navigation arrows allow browsing forward and backward through months.
+The main interface displays a full monthly calendar with configurable color-coded assignment blocks for each staff member. Shift groups are displayed separately within each day cell. Break and "off" days are shown inline as labeled indicators. Icons appear on days that are individually locked (distinct from month-level lock) and/or have notes attached. Navigation arrows allow browsing forward and backward through months.
 
-#### Desktop
-<img src="screenshots/calendar_view.png">
-
-#### Web app
 <img src="screenshots/calendar_view_web.png">
 
 ---
@@ -34,52 +30,51 @@ The main interface displays a full monthly calendar with configurable color-code
 #### Manual Day Editing
 Clicking any calendar day opens a day editor where assignments can be changed, break days can be reassigned, and off days can be added or removed per shift. The editor enforces break-day limits and warns before allowing overrides that would exceed a staff member's configured quota. The editor also allows attaching a free-text note to a day and toggling per-day protection, which locks that day's assignments even if that month's schedule is regenerated for any reason.
 
-#### Desktop
-<img src="screenshots/day_editor.png">
-
-#### Web app
 <img src="screenshots/day_editor_web.png">
 
 ---
 
 #### Assignment Summary
-A summary window lists each staff member's duty assignment counts, break days (with dates), and unavailable days for the current month, useful for auditing fairness and confirming the schedule makes sense before publishing.
+A summary window lists each staff member's duty assignment counts, break days (with dates), and unavailable days for the current month.
 
-#### Desktop
-<img src="screenshots/assignment_summary.png">
-
-#### Web app
 <img src="screenshots/assignment_summary_web.png">
 
 ---
 
 #### Settings / Admin Panel
-A dedicated admin view provides tabs for managing staff and duties, workspace settings, and viewing the audit log.
+A dedicated admin view provides tabs for managing staff, duties, workspace settings, users, and the audit log.
 
 
- - Members tab - add, edit, or remove staff; set shift group, add/remove unavailable dates
+ - **Staff tab** — add, edit, or archive staff members; configure shift group, working hours, color, and unavailable dates per staff member
    
-   <img src="screenshots/member_editor.png"> &nbsp;&nbsp;&nbsp;&nbsp; <img src="screenshots/member_editor_web.png">
+   <img src="screenshots/member_editor_web.png">
 
- - Duties tab - define duty types, assign them to shift groups, and 'delete' (archive) duties that are no longer active
+ - **Duties tab** — define duty types, assign them to one or more shift groups, and archive duties that are no longer active
    
-   <img src="screenshots/duty_editor.png"> &nbsp;&nbsp;&nbsp;&nbsp; <img src="screenshots/duty_editor_web.png">
+   <img src="screenshots/duty_editor_web.png">
 
- - Settings tab - configure break-day quotas per shift group, rename or delete workspaces, and view/restore archived schedules
+ - **Settings tab** — configure break-day quotas per shift group, manage workspaces, import data from the desktop version, and view or delete archived schedules
 
-   <img src="screenshots/settings_tab.png"> &nbsp;&nbsp;&nbsp;&nbsp; <img src="screenshots/settings_tab_web.png">
+   <img src="screenshots/settings_tab_web.png">
+
+ - **Users tab** *(web app only)* — manage user accounts within the organization; assign roles (admin, editor, viewer), configure per-permission toggles for editor accounts, create portal accounts for staff members, and change passwords
+
+   <img src="screenshots/users_tab_web.png">
    
- - Audit log tab - view a timestamped history of changes made in the workspace: staff edits, duty changes, workspace renames, and schedule events. The log is filterable by keyword and sortable by any column.
+ - **Audit log tab** — view a timestamped history of changes made in the workspace: staff edits, duty changes, workspace renames, and schedule events; filterable by keyword
 
-   <img src="screenshots/audit_log.png"> &nbsp;&nbsp;&nbsp;&nbsp; <img src="screenshots/audit_log_web.png">
+   <img src="screenshots/audit_log_web.png">
 
 ---
 
+**Multi-tenancy and Role-Based Access** *(web app)* The web app is built around an organization and workspace model. Each organization has its own isolated data, and workspaces within an organization represent separate teams or departments. User roles (admin, editor, viewer) control what each user can see and do, with editors supporting granular per-permission configuration - for example, allowing schedule generation but not staff edits.
+
+**Import from Desktop** A built-in import tool accepts a ZIP file exported from the desktop version and migrates all workspaces, staff, duties, settings, and schedules — including archived months — into the web 
+app. Member and duty IDs are remapped automatically, and re-importing is fully idempotent: existing data is updated rather than duplicated.
+
 **Schedule Locking:** Once a schedule is finalized, it can be locked to prevent accidental regeneration. The lock state is displayed on the calendar and disables the regenerate button.
 
-**Export to Image:** The current month's calendar can be exported as a PNG file, useful for sharing with staff or posting in a shared location.
-
-**Schedule Archiving:** When a month rolls over, previous schedules are automatically moved to an archive. Archived schedules can be viewed or deleted from the Settings panel.
+**Schedule Archiving:** When a month rolls over, previous schedules are automatically moved to an archive. Archived schedules can be viewed in full (with assignment summary) or deleted from the Settings panel.
 
 ---
 
@@ -115,18 +110,27 @@ forward so the remaining days balance correctly against what has already occurre
 
 ### Tech Stack
 
- - Python with CustomTkinter for the GUI
- - JSON for persistent local storage of schedules, staff, duties, and settings
- - Pillow for calendar image export
- - Data is stored in a user-specific AppData directory when packaged as an executable
+#### Web app
+- Python / FastAPI backend
+- Supabase (PostgreSQL + Auth) for data persistence and authentication
+- Jinja2 templating with a custom dark-mode-first CSS design system
+- Vanilla JavaScript for calendar interactions, day editor, and dynamic UI
+- Deployed on Railway
+
+#### Desktop (original version)
+- Python with CustomTkinter for the GUI
+- JSON for persistent local storage
+- Pillow for calendar image export
 
 ---
 
 ### Skills Demonstrated
 
- - Designing and implementing a non-trivial scheduling algorithm with multiple interacting constraints
- - Building a full desktop GUI application with custom widgets, modal dialogs, and dynamic layout updates
- - Managing persistent state across sessions with a JSON-based data layer including migration from legacy storage paths
- - Supporting multiple independent data contexts (workspaces) within a single application
- - Handling edge cases gracefully — mid-month regeneration, prorated quotas, archived duty types, and manual overrides
- - Implementing an audit trail with per-workspace persistence, filterable/sortable UI, and automatic logging of state changes across multiple editor elements
+- Designing and implementing a non-trivial scheduling algorithm with multiple interacting constraints — availability, break-day quotas, consecutive-day avoidance, mid-month regeneration, and post-processing fairness passes
+- Rebuilding a working desktop application as a production web app, preserving full feature parity while adapting the architecture to a multi-tenant, browser-based context
+- Designing a multi-tenant SaaS architecture with org/workspace isolation and Supabase row-level security
+- Building a full-stack web application with a FastAPI backend, PostgreSQL via Supabase, Jinja2 templating, and vanilla JavaScript — no frontend framework
+- Implementing role-based access control with granular per-permission editor configuration and secure HTTP-only session cookie authentication
+- Building a data migration pipeline that maps a flat JSON desktop format to a normalized relational schema, with ID remapping and idempotent re-import support
+- Handling scheduling edge cases gracefully — prorated break quotas, archived duty types, protected days, and manual overrides with audit trail logging
+- Deploying a production web application on Railway with environment-based configuration, HTTPS, and GitHub-integrated continuous deployment
