@@ -55,7 +55,7 @@ A dedicated admin view provides tabs for managing staff, duties, workspace setti
 
  - **Settings tab** — configure break-day quotas per shift group, manage workspaces, import data from the desktop version, and view or delete archived schedules
 
-   <img src="screenshots/settings_tab_web.png">
+   <img src="screenshots/settings_tab_web.png?v=2">
 
  - **Users tab** *(web app only)* — manage user accounts within the organization; assign roles (admin, editor, viewer), configure per-permission toggles for editor accounts, create portal accounts for staff members, and change passwords
 
